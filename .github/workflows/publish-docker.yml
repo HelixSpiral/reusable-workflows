@@ -47,5 +47,5 @@ jobs:
           platforms: linux/amd64,linux/arm64
           context: .
           tags: |
-            ${{ inputs.registry }}/${{ inputs.image_name }}:${{ inputs.image_version }}
-            ${{ inputs.registry }}/${{ inputs.image_name }}:latest
+            ${{ inputs.registry }}/${{ inputs.image-name }}:${{ inputs.image-version }}
+            ${{ inputs.registry }}/${{ inputs.image-name }}:latest
