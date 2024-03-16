@@ -1,0 +1,51 @@
+name: Publish Docker Image
+
+on:
+  workflow_call:
+    inputs:
+      registry:
+        description: 'The registry to publish the image to'
+        required: true
+        type: string
+        default: 'ghcr.io'
+      image_name:
+        description: 'The name of the image to publish'
+        required: true
+        type: string
+      image_version:
+        description: 'The version of the image to publish'
+        required: true
+        type: string
+        default: ${{ github.ref_name }}
+
+jobs:
+  Publish:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v4.1.1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ inputs.registry }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & Publish Docker image
+        uses: docker/build-push-action@v5.2.0
+        with:
+          push: true
+          platforms: linux/amd64,linux/arm64
+          context: .
+          tags: |
+            ${{ inputs.registry }}/${{ inputs.image_name }}:${{ inputs.image_version }}
+            ${{ inputs.registry }}/${{ inputs.image_name }}:latest
